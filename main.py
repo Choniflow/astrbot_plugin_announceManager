@@ -1,24 +1,107 @@
+'''FileHeader
+: @Author: Chroniflow
+: @Date: 1/24/2026, 8:14:34 PM
+: @LastEditors: Chroniflow
+: @LastEditTime: 1/25/2026, 12:05:02 PM
+: @Description: 公告推送管理器主程序
+: @Copyright: Copyright (©)}) 2026 Chroniflow. Open-Source with GPL Licence.
+: @Email: code@ylyq.site
+'''
 from astrbot.api.event import filter, AstrMessageEvent, MessageEventResult
 from astrbot.api.star import Context, Star, register
 from astrbot.api import logger
+from data.plugins.astrbot_plugin_announceManager.controller import dataController, userController
+from astrbot.core.utils.astrbot_path import get_astrbot_data_path
 
-@register("helloworld", "YourName", "一个简单的 Hello World 插件", "1.0.0")
-class MyPlugin(Star):
+@register("公告推送管理器", "Chroniflow", "公告推送&管理插件", "nightly", "https://github.com/Choniflow/astrbot_plugin_announceManager")
+class AnnounceManager(Star):
     def __init__(self, context: Context):
         super().__init__(context)
 
     async def initialize(self):
-        """可选择实现异步的插件初始化方法，当实例化该插件类之后会自动调用该方法。"""
+        """初始化进程"""
 
-    # 注册指令的装饰器。指令名为 helloworld。注册成功后，发送 `/helloworld` 就会触发这个指令，并回复 `你好, {user_name}!`
-    @filter.command("helloworld")
-    async def helloworld(self, event: AstrMessageEvent):
-        """这是一个 hello world 指令""" # 这是 handler 的描述，将会被解析方便用户了解插件内容。建议填写。
+        logger.info("Welcome to announceManager!")
+        logger.info("Getted AstrBot path: %s", get_astrbot_data_path())
+        logger.info("Database file: %s", get_astrbot_data_path()+"/plugin_data/"+self.name+"/data.db")
+
+        # 调用sqlite_init初始化SQL结构
+        await dataController._init_table(None)
+
+    @filter.command_group("anadmin")
+    async def admin_commands(self):
+        """
+        admin_commands
+        Admin指令主类
+        
+        :param self
+        :param event
+        :type event: AstrMessageEvent
+        """
+
+        pass
+    
+    @admin_commands.command("hello")
+    async def admin_hello(self, event: AstrMessageEvent):
+        """
+        admin_hello 的 Docstring
+        
+        :param self: 说明
+        :param event: 说明
+        :type event: AstrMessageEvent
+        """
+
         user_name = event.get_sender_name()
-        message_str = event.message_str # 用户发的纯文本消息字符串
-        message_chain = event.get_messages() # 用户所发的消息的消息链 # from astrbot.api.message_components import *
-        logger.info(message_chain)
-        yield event.plain_result(f"Hello, {user_name}, 你发了 {message_str}!") # 发送一条纯文本消息
+        yield event.plain_result(open(get_astrbot_data_path()+f"/plugins/astrbot_plugin_announceManager/templates/message/admin/hello.txt","r").read().replace("%user_name%",user_name)) # 发送一条纯文本消息
+    
+    @filter.permission_type(filter.PermissionType.ADMIN)
+    @admin_commands.command("rm-rf/*", alias={"rm -rf /*"})
+    async def cleanAll(self, event: AstrMessageEvent):
+        """
+        cleanAll 的 Docstring
+        
+        :param self: 说明
+        :param event: 说明
+        :type event: AstrMessageEvent
+        """
+
+        user_name: str = event.get_sender_name()
+
+        yield event.plain_result(str(await dataController._clean_all(user_name)))
+    
+    @filter.permission_type(filter.PermissionType.ADMIN)
+    @admin_commands.command("init")
+    async def initTable(self, event: AstrMessageEvent):
+        """
+        initTable 的 Docstring
+        
+        :param self: 说明
+        :param event: 说明
+        :type event: AstrMessageEvent
+        """
+
+        user_name: str = event.get_sender_name()
+
+        yield event.plain_result(str(await dataController._init_table(user_name)))
+
+    @filter.permission_type(filter.PermissionType.ADMIN)
+    @admin_commands.command("user add")
+    async def addUser(self, event: AstrMessageEvent, user: int, permitted_group: str):
+        """
+        addUser 的 Docstring
+        
+        :param self: 说明
+        :param event: 说明
+        :type event: AstrMessageEvent
+        """
+
+        userName: str = event.get_sender_name()
+        logger.info(f"Admin {userName} is adding a user with permitted group {permitted_group}.")
+        try:
+            yield event.plain_result(str(await userController.addUser(user, permitted_group)))
+        except Exception as e:
+            logger.error(e)
+            yield event.plain_result(str(e))
 
     async def terminate(self):
         """可选择实现异步的插件销毁方法，当插件被卸载/停用时会调用。"""

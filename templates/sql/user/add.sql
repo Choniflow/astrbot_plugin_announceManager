@@ -1,0 +1,1 @@
+INSERT INTO "user"("qid","permitted_group") VALUES (%qid%,%permitted_group%);
