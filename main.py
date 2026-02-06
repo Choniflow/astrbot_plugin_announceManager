@@ -11,7 +11,10 @@ from astrbot.api.event import filter, AstrMessageEvent, MessageEventResult
 from astrbot.api.star import Context, Star, register
 from astrbot.api import logger
 from data.plugins.astrbot_plugin_announceManager.controller import dataController, userController
+from data.plugins.astrbot_plugin_announceManager.processor import message, markdownRenderer
 from astrbot.core.utils.astrbot_path import get_astrbot_data_path
+import astrbot.api.message_components as Comp
+from astrbot.core.utils.session_waiter import ( session_waiter, SessionController )
 
 @register("公告推送管理器", "Chroniflow", "公告推送&管理插件", "nightly", "https://github.com/Choniflow/astrbot_plugin_announceManager")
 class AnnounceManager(Star):
@@ -102,6 +105,55 @@ class AnnounceManager(Star):
         except Exception as e:
             logger.error(e)
             yield event.plain_result(str(e))
+
+    @filter.permission_type(filter.PermissionType.ADMIN)
+    @admin_commands.command("message send")
+    async def debugSendMessage(self, event: AstrMessageEvent, msg: str, target: str):
+        await message.textMessage(self, event.get_session_id(), target, msg)
+
+    @filter.permission_type(filter.PermissionType.ADMIN)
+    @admin_commands.command("markdown render")
+    async def debugRenderMarkdownImage(self, event: AstrMessageEvent):
+        try:
+            yield event.plain_result("请发送Markdown内容")
+
+            @session_waiter(timeout=180, record_history_chains=False)
+            async def renderSession(controller: SessionController, event: AstrMessageEvent):
+                content: str = event.message_str
+                
+                if content == "Q":
+                    await event.send(event.plain_result("取消渲染"))
+                    controller.stop()
+                    return
+
+                if content == "":
+                    return
+                
+                await event.send(event.plain_result("请求已接受, 正在渲染…"))
+                # controller.stop()
+                
+
+                url = await markdownRenderer.render(content)
+                await event.send(event.image_result(url))
+                controller.stop()
+            
+            try:
+                await renderSession(event)
+            
+            except TimeoutError as _:
+                yield event.plain_result("Timeout!")
+        
+            except Exception as e:
+                yield event.plain_result("Error! See Logs!")
+                logger.error(e)
+
+            finally:
+                event.stop_event()
+
+        except Exception as e:
+            yield event.plain_result("Error! See Logs!")
+            logger.error(e)
+
 
     async def terminate(self):
         """可选择实现异步的插件销毁方法，当插件被卸载/停用时会调用。"""

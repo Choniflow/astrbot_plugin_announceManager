@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown内容</title>
+    <!-- 引入marked.js用于Markdown解析 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 引入highlight.js用于代码高亮 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+
+        .markdown-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Markdown样式 */
+        .markdown-content h1 {
+            border-bottom: 2px solid #eaecef;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: #24292e;
+        }
+
+        .markdown-content h2 {
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 16px;
+            color: #24292e;
+        }
+
+        .markdown-content h3,
+        .markdown-content h4,
+        .markdown-content h5,
+        .markdown-content h6 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            color: #24292e;
+        }
+
+        .markdown-content p {
+            margin-bottom: 16px;
+        }
+
+        .markdown-content ul,
+        .markdown-content ol {
+            margin-bottom: 16px;
+            padding-left: 30px;
+        }
+
+        .markdown-content li {
+            margin-bottom: 4px;
+        }
+
+        .markdown-content blockquote {
+            border-left: 4px solid #dfe2e5;
+            padding: 0 16px;
+            margin: 16px 0;
+            color: #6a737d;
+            background-color: #f8f9fa;
+        }
+
+        .markdown-content code {
+            background-color: rgba(27, 31, 35, 0.05);
+            border-radius: 3px;
+            font-size: 85%;
+            margin: 0;
+            padding: 0.2em 0.4em;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+
+        .markdown-content pre {
+            background-color: #f6f8fa;
+            border-radius: 6px;
+            font-size: 85%;
+            line-height: 1.45;
+            overflow: auto;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .markdown-content pre code {
+            background-color: transparent;
+            border: 0;
+            display: inline;
+            line-height: inherit;
+            margin: 0;
+            max-width: auto;
+            overflow: visible;
+            padding: 0;
+            word-wrap: normal;
+        }
+
+        .markdown-content table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+            margin: 16px 0;
+        }
+
+        .markdown-content table th,
+        .markdown-content table td {
+            border: 1px solid #dfe2e5;
+            padding: 6px 13px;
+        }
+
+        .markdown-content table th {
+            background-color: #f6f8fa;
+            font-weight: 600;
+        }
+
+        .markdown-content table tr:nth-child(2n) {
+            background-color: #f6f8fa;
+        }
+
+        .markdown-content a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+
+        .markdown-content a:hover {
+            text-decoration: underline;
+        }
+
+        .markdown-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .markdown-content hr {
+            border: none;
+            border-top: 1px solid #eaecef;
+            margin: 24px 0;
+        }
+
+        /* 任务列表样式 */
+        .markdown-content input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .markdown-content .task-list-item {
+            list-style-type: none;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .markdown-content {
+                padding: 20px;
+            }
+
+            .markdown-content table {
+                font-size: 14px;
+            }
+
+            .markdown-content pre {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            color: #6a737d;
+            font-style: italic;
+        }
+
+        .loading::before {
+            content: "⏳ ";
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="markdown-content" id="content">
+        <div class="loading">正在加载内容...</div>
+    </div>
+
+    <script>
+        // 配置marked选项
+        marked.setOptions({
+            highlight: function (code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    try {
+                        return hljs.highlight(code, { language: lang }).value;
+                    } catch (err) { }
+                }
+                return hljs.highlightAuto(code).value;
+            },
+            breaks: true,
+            gfm: true,
+            tables: true,
+            sanitize: false
+        });
+
+        // Markdown内容（将被外部代码替换）
+        const markdownContent = `%item%`;
+
+        // 渲染Markdown内容
+        function renderContent() {
+            const contentDiv = document.getElementById('content');
+
+            try {
+                // 检查是否有实际内容
+                if (markdownContent.trim() === '%item%' || !markdownContent.trim()) {
+                    contentDiv.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #6a737d;">
+                            <h2>📝 Markdown模板</h2>
+                            <p>此页面等待外部代码将 <code>%item%</code> 替换为实际的Markdown内容。</p>
+                            <p style="font-size: 14px; margin-top: 20px;">
+                                <strong>使用方法：</strong><br>
+                                外部代码应该将模板中的 <code>%item%</code> 替换为实际的Markdown文本，
+                                然后此页面会自动渲染为HTML格式。
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // 渲染Markdown为HTML
+                try {
+                    const htmlContent = marked.parse(markdownContent);
+                    contentDiv.innerHTML = htmlContent;
+
+                    // 应用代码高亮
+                    contentDiv.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
+
+                    // 处理任务列表
+                    contentDiv.querySelectorAll('li').forEach((li) => {
+                        if (li.innerHTML.match(/^\s*\[[ x]\]/)) {
+                            li.classList.add('task-list-item');
+                            li.innerHTML = li.innerHTML.replace(/^\s*\[([ x])\]/,
+                                '<input type="checkbox" disabled $1>'.replace('$1',
+                                    li.innerHTML.match(/^\s*\[x\]/i) ? 'checked' : ''));
+                        }
+                    });
+                } catch (error) {
+                    contentDiv.innerHTML = `
+                    <div style="color: #d73a49; padding: 20px; border: 1px solid #f97583; border-radius: 6px; background-color: #ffeef0;">
+                        <h3>❌ 渲染错误</h3>
+                        <p><strong>错误信息：</strong> ${error.message}</p>
+                        <p><strong>原始内容：</strong></p>
+                        <pre style="background-color: #f6f8fa; padding: 10px; border-radius: 3px; overflow-x: auto;">${markdownContent}</pre>
+                    </div>
+                `   ;
+                }
+
+            } catch (error) {
+                contentDiv.innerHTML = `
+                    <div style="color: #d73a49; padding: 20px; border: 1px solid #f97583; border-radius: 6px; background-color: #ffeef0;">
+                        <h3>❌ 渲染错误</h3>
+                        <p><strong>错误信息：</strong> ${error.message}</p>
+                        <p><strong>原始内容：</strong></p>
+                        <pre style="background-color: #f6f8fa; padding: 10px; border-radius: 3px; overflow-x: auto;">${markdownContent}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        // 页面加载完成后渲染内容
+        document.addEventListener('DOMContentLoaded', renderContent);
+
+        // 如果marked库还未加载完成，等待加载
+        if (typeof marked === 'undefined') {
+            window.addEventListener('load', renderContent);
+        }
+    </script>
+</body>
+
+</html>

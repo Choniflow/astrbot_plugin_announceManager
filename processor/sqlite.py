@@ -68,7 +68,7 @@ async def parse(template_file: TextIOWrapper) -> list[str]:
     # 尝试读取模版文件并转化为列表
     # :throws Exception
     try:
-        template:list[str] = template_file.readlines()
+        template: list[str] = template_file.readlines()
     except Exception as e:
         raise e
     
@@ -103,10 +103,4 @@ async def parse(template_file: TextIOWrapper) -> list[str]:
     
     else:
         return statement
-
-
-##################################################################
-# Packaged Features
-##################################################################
-
 

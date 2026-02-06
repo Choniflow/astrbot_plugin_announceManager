@@ -1,1 +1,1 @@
-INSERT INTO "user"("qid","permitted_group") VALUES (%qid%,%permitted_group%);
+INSERT INTO "main"."user"("qid","permitted_group") VALUES (%qid%,"%permitted_group%");
