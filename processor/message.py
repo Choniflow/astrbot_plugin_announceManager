@@ -1,12 +1,12 @@
-'''FileHeader
+"""FileHeader
 : @Author: Chroniflow
 : @Date: 2/4/2026, 9:31:54 PM
 : @LastEditors: Chroniflow
 : @LastEditTime: 2/4/2026, 9:32:00 PM
-: @Description: 
+: @Description:
 : @Copyright: Copyright (©)}) 2026 Chroniflow. All rights reserved.
 : @Email: code@ylyq.site
-'''
+"""
 
 
 from astrbot.api.event import MessageChain
@@ -17,7 +17,9 @@ async def textMessage(self: Star, source: str | None, target: str, content: str)
     """
     textMessage
     发送一条纯文本消息
-    
+
+    :param self: 插件自身传入self
+    :type self: Star
     :param source: 消息来源SID
     :type target: str
     :param target: 消息目标SID

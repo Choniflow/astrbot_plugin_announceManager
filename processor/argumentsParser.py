@@ -73,3 +73,98 @@ def parse(input_string: str,
             i += 1
     
     return result
+
+
+def parse_args_advanced(input_string, arg_spec) -> dict[str, list[str]]:
+    """
+    高级命令行参数解析函数，支持短参数和列表类型
+
+    Args:
+        input_string: 包含参数的字符串
+        arg_spec: 参数规范字典，格式为：
+            {
+                "--long-arg": {
+                    "type": "bool" | "str",
+                    "short": "-s",      # 可选，短参数名
+                    "list": bool         # 可选，仅对str有效，是否解析为列表
+                },
+                ...
+            }
+
+    Returns:
+        字典，键为长参数名，值为解析结果。
+        布尔型：True/False
+        字符串型：字符串或列表（如果list=True）
+    """
+    # 初始化结果字典
+    result = {}
+
+    # 构建长参数到规范的映射，同时构建短参数到长参数的映射
+    long_to_spec = {}
+    short_to_long = {}
+
+    for long_arg, spec in arg_spec.items():
+        long_to_spec[long_arg] = spec
+        # 如果指定了短参数，建立映射
+        if 'short' in spec:
+            short_to_long[spec['short']] = long_arg
+        # 初始化结果：布尔型默认为False，字符串型默认为空字符串或空列表
+        if spec['type'] == 'bool':
+            result[long_arg] = False
+        elif spec['type'] == 'str':
+            # 如果列表类型，默认空列表，否则空字符串
+            result[long_arg] = [] if spec.get('list', False) else ""
+        else:
+            raise ValueError(f"不支持的参数类型: {spec['type']}")
+
+    # 如果输入字符串为空，直接返回
+    if not input_string:
+        return result
+
+    # 分割字符串
+    parts = input_string.split()
+    i = 0
+    n = len(parts)
+
+    while i < n:
+        token = parts[i]
+
+        # 判断token是长参数还是短参数
+        long_arg = None
+        if token in long_to_spec:
+            long_arg = token
+        elif token in short_to_long:
+            long_arg = short_to_long[token]
+
+        if long_arg is None:
+            # 不是已知参数，跳过
+            i += 1
+            continue
+
+        spec = long_to_spec[long_arg]
+
+        if spec['type'] == 'bool':
+            # 布尔参数，直接设置为True
+            result[long_arg] = True
+            i += 1
+        else:  # str类型
+            # 检查是否有下一个token作为值
+            if i + 1 < n:
+                next_token = parts[i + 1]
+                # 如果下一个token不是以"-"开头（即不是参数），则作为值
+                if not next_token.startswith('-'):
+                    value = next_token
+                    # 处理列表
+                    if spec.get('list', False):
+                        result[long_arg] = value.split(',')
+                    else:
+                        result[long_arg] = value
+                    i += 2  # 消耗参数和值
+                else:
+                    # 下一个是参数，表示没有提供值，保持默认
+                    i += 1
+            else:
+                # 没有下一个token，保持默认
+                i += 1
+
+    return result

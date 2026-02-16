@@ -1,0 +1,69 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="Eslint" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="aiocqhttp" />
+          <option value="aiodocker" />
+          <option value="aiohttp" />
+          <option value="aiosqlite" />
+          <option value="anthropic" />
+          <option value="apscheduler" />
+          <option value="beautifulsoup4" />
+          <option value="certifi" />
+          <option value="chardet" />
+          <option value="colorlog" />
+          <option value="cryptography" />
+          <option value="dashscope" />
+          <option value="defusedxml" />
+          <option value="deprecated" />
+          <option value="dingtalk-stream" />
+          <option value="docstring-parser" />
+          <option value="faiss-cpu" />
+          <option value="filelock" />
+          <option value="google-genai" />
+          <option value="lark-oapi" />
+          <option value="lxml-html-clean" />
+          <option value="mcp" />
+          <option value="openai" />
+          <option value="ormsgpack" />
+          <option value="pillow" />
+          <option value="psutil" />
+          <option value="py-cord" />
+          <option value="pydantic" />
+          <option value="pydub" />
+          <option value="pyjwt" />
+          <option value="python-telegram-bot" />
+          <option value="qq-botpy" />
+          <option value="quart" />
+          <option value="readability-lxml" />
+          <option value="silk-python" />
+          <option value="slack-sdk" />
+          <option value="sqlalchemy" />
+          <option value="sqlmodel" />
+          <option value="telegramify-markdown" />
+          <option value="watchfiles" />
+          <option value="websockets" />
+          <option value="wechatpy" />
+          <option value="click" />
+          <option value="pypdf" />
+          <option value="aiofiles" />
+          <option value="rank-bm25" />
+          <option value="jieba" />
+          <option value="markitdown-no-magika" />
+          <option value="xinference-client" />
+          <option value="tenacity" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyPep8NamingInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="ignoredErrors">
+        <list>
+          <option value="N802" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

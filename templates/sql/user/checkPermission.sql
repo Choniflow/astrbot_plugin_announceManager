@@ -1,0 +1,1 @@
+SELECT permitted_group FROM "main"."user" WHERE qid == ? AND permitted_group == ?
